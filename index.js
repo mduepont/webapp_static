@@ -1,5 +1,5 @@
 const express = require('express');
-
+const fetchTweets = require('./lib/services/twitter');
 const app = express();
 
 app.use(express.static('./assets'));
@@ -33,10 +33,17 @@ app.get('/about',(req, res)=>{
 });
 
 app.get('/tweets',(req, res)=>{
-    res.render('pages/tweets',{
-        title: 'Tweets',
-        headline: 'irgendetwas'
-    });
+
+    const query = req.query.q || 'Node.js';
+
+    fetchTweets(query)
+        .then((tweets) => {
+            res.render('pages/tweets',{
+                title: 'Tweets',
+                headline: 'My Tweets',
+                tweets,
+            });    
+        });
 });
 
 app.listen(8080, (err)=>{
